@@ -1,2 +1,2 @@
-# arc-money
-ARC testnet
+# ARR-Protocol
+ARR Protocol, ARC Testnet
