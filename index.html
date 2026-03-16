@@ -116,6 +116,25 @@
         statusText.innerText = "Erro no depósito: " + err.message;
       }
     };
+    async function connectWallet() {
+  if (window.ethereum) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+    
+    console.log("Conectado:", address);
+
+    // Aqui vem a assinatura da mensagem
+    const message = "Estou acessando este dApp.";
+    const signature = await signer.signMessage(message);
+    console.log("Assinatura:", signature);
+
+    // Continue com o que você faria a seguir (ex.: habilitar botões, carregar dados do contrato, etc.)
+  } else {
+    console.log("MetaMask não encontrada");
+  }
+}
   </script>
 </body>
 </html>
