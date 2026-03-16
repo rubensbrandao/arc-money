@@ -1,140 +1,259 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Counter dApp - Arc Testnet</title>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
-    button { margin: 5px; padding: 10px 15px; font-size: 16px; }
-    input { padding: 5px; font-size: 14px; width: 100px; }
-    p { font-size: 16px; }
-    #status { color: green; }
-  </style>
-</head>
-<body>
-  <h2>Counter dApp - Arc Testnet</h2>
-  <button id="connectWallet">Conectar Carteira</button>
-  <p id="walletAddress">Endereço: (aguardando conexão...)</p>
+<meta charset="UTF-8">
+<title>ARC Protocol</title>
 
-  <p>Number atual: <span id="number">0</span></p>
-  <input type="number" id="newNumber" placeholder="Novo número">
-  <button id="setNumberButton" disabled>Set Number</button>
-  <button id="incrementButton" disabled>Increment</button>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
-  <h3>Saldo do contrato (ETH)</h3>
-  <p id="contractBalance">0 ETH</p>
-  <input type="number" id="depositAmount" placeholder="ETH para depositar">
-  <button id="depositButton" disabled>Depositar ETH</button>
+<style>
 
-  <p id="status"></p>
-
-  <script>
-    const connectButton = document.getElementById("connectWallet");
-    const walletAddress = document.getElementById("walletAddress");
-    const numberText = document.getElementById("number");
-    const newNumberInput = document.getElementById("newNumber");
-    const setNumberButton = document.getElementById("setNumberButton");
-    const incrementButton = document.getElementById("incrementButton");
-    const contractBalanceText = document.getElementById("contractBalance");
-    const depositInput = document.getElementById("depositAmount");
-    const depositButton = document.getElementById("depositButton");
-    const statusText = document.getElementById("status");
-
-    const CONTRACT_ADDRESS = "0x70581DF0efd24AeA5ECaea97C2f7C7935bf59549";
-
-    const ABI = [
-      { "inputs": [], "name": "number", "outputs": [{"internalType":"uint256","name":"","type":"uint256"}], "stateMutability":"view", "type":"function" },
-      { "inputs": [{"internalType":"uint256","name":"newNumber","type":"uint256"}], "name":"setNumber", "outputs": [], "stateMutability":"nonpayable", "type":"function" },
-      { "inputs": [], "name": "increment", "outputs": [], "stateMutability":"nonpayable", "type":"function" },
-      { "inputs": [], "name": "getBalance", "outputs": [{"internalType":"uint256","name":"","type":"uint256"}], "stateMutability":"view", "type":"function" }
-    ];
-
-    let contract;
-    let signer;
-
-    async function updateNumber() {
-      const value = await contract.number();
-      numberText.innerText = value.toString();
-    }
-
-    async function updateContractBalance() {
-      const balance = await contract.getBalance();
-      contractBalanceText.innerText = ethers.utils.formatEther(balance) + " ETH";
-    }
-
-    connectButton.onclick = async () => {
-      if (!window.ethereum) return alert("MetaMask não encontrada!");
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      signer = provider.getSigner();
-      const address = await signer.getAddress();
-      walletAddress.innerText = "Conectado: " + address;
-
-      contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-
-      setNumberButton.disabled = false;
-      incrementButton.disabled = false;
-      depositButton.disabled = false;
-
-      await updateNumber();
-      await updateContractBalance();
-    };
-
-    setNumberButton.onclick = async () => {
-      const newValue = newNumberInput.value;
-      if (!newValue) return alert("Digite um número!");
-      statusText.innerText = "Atualizando número...";
-      const tx = await contract.setNumber(newValue);
-      await tx.wait();
-      await updateNumber();
-      statusText.innerText = "Número atualizado!";
-    };
-
-    incrementButton.onclick = async () => {
-      statusText.innerText = "Incrementando número...";
-      const tx = await contract.increment();
-      await tx.wait();
-      await updateNumber();
-      statusText.innerText = "Número incrementado!";
-    };
-
-    depositButton.onclick = async () => {
-      const amount = depositInput.value;
-      if (!amount) return alert("Digite o valor de ETH!");
-      statusText.innerText = "Depositando ETH...";
-      try {
-        const tx = await signer.sendTransaction({
-          to: CONTRACT_ADDRESS,
-          value: ethers.utils.parseEther(amount)
-        });
-        await tx.wait();
-        await updateContractBalance();
-        statusText.innerText = "ETH depositado com sucesso!";
-      } catch(err) {
-        statusText.innerText = "Erro no depósito: " + err.message;
-      }
-    };
-    async function connectWallet() {
-  if (window.ethereum) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const address = await signer.getAddress();
-    
-    console.log("Conectado:", address);
-
-    // Aqui vem a assinatura da mensagem
-    const message = "Estou acessando este dApp.";
-    const signature = await signer.signMessage(message);
-    console.log("Assinatura:", signature);
-
-    // Continue com o que você faria a seguir (ex.: habilitar botões, carregar dados do contrato, etc.)
-  } else {
-    console.log("MetaMask não encontrada");
-  }
+body{
+font-family: Arial;
+background:#f4f6f9;
+padding:40px;
 }
-  </script>
+
+button{
+padding:10px 20px;
+margin:5px;
+font-size:16px;
+}
+
+input{
+padding:8px;
+margin:5px;
+}
+
+#status{
+color:green;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>ARC Protocol</h2>
+
+<button id="connectWallet">Conectar Carteira</button>
+
+<p id="walletAddress">Carteira não conectada</p>
+
+<p id="signatureStatus">Assinatura pendente</p>
+
+<hr>
+
+<h3>Counter</h3>
+
+<p>Número atual: <span id="number">0</span></p>
+
+<input id="newNumber" type="number" placeholder="Novo número">
+
+<button id="setNumberButton" disabled>Set Number</button>
+
+<button id="incrementButton" disabled>Increment</button>
+
+<hr>
+
+<h3>Saldo do contrato</h3>
+
+<p id="contractBalance">0 ETH</p>
+
+<input id="depositAmount" placeholder="Valor ETH">
+
+<button id="depositButton" disabled>Depositar ETH</button>
+
+<p id="status"></p>
+
+<script>
+
+const CONTRACT_ADDRESS = "0x70581DF0efd24AeA5ECaea97C2f7C7935bf59549"
+
+const ABI = [
+
+{
+"inputs": [],
+"name": "number",
+"outputs": [{"internalType":"uint256","name":"","type":"uint256"}],
+"stateMutability":"view",
+"type":"function"
+},
+
+{
+"inputs":[{"internalType":"uint256","name":"newNumber","type":"uint256"}],
+"name":"setNumber",
+"outputs":[],
+"stateMutability":"nonpayable",
+"type":"function"
+},
+
+{
+"inputs":[],
+"name":"increment",
+"outputs":[],
+"stateMutability":"nonpayable",
+"type":"function"
+},
+
+{
+"inputs":[],
+"name":"getBalance",
+"outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+"stateMutability":"view",
+"type":"function"
+}
+
+]
+
+let provider
+let signer
+let contract
+
+const connectButton = document.getElementById("connectWallet")
+const walletText = document.getElementById("walletAddress")
+const signatureText = document.getElementById("signatureStatus")
+
+const numberText = document.getElementById("number")
+const setButton = document.getElementById("setNumberButton")
+const incButton = document.getElementById("incrementButton")
+
+const depositButton = document.getElementById("depositButton")
+const depositInput = document.getElementById("depositAmount")
+
+const balanceText = document.getElementById("contractBalance")
+
+const statusText = document.getElementById("status")
+
+async function updateNumber(){
+
+const value = await contract.number()
+
+numberText.innerText = value.toString()
+
+}
+
+async function updateBalance(){
+
+const balance = await contract.getBalance()
+
+balanceText.innerText = ethers.utils.formatEther(balance) + " ETH"
+
+}
+
+connectButton.onclick = async () => {
+
+if(!window.ethereum){
+
+alert("MetaMask não encontrada")
+
+return
+
+}
+
+provider = new ethers.providers.Web3Provider(window.ethereum)
+
+await provider.send("eth_requestAccounts", [])
+
+signer = provider.getSigner()
+
+const address = await signer.getAddress()
+
+walletText.innerText = "Conectado: " + address
+
+// PEDIR ASSINATURA
+
+try{
+
+const message = "Assinar para acessar ARC Protocol"
+
+const signature = await signer.signMessage(message)
+
+console.log("Assinatura:", signature)
+
+signatureText.innerText = "Assinatura confirmada"
+
+}catch(err){
+
+signatureText.innerText = "Assinatura recusada"
+
+return
+
+}
+
+// iniciar contrato
+
+contract = new ethers.Contract(CONTRACT_ADDRESS,ABI,signer)
+
+setButton.disabled = false
+
+incButton.disabled = false
+
+depositButton.disabled = false
+
+await updateNumber()
+
+await updateBalance()
+
+}
+
+setButton.onclick = async () => {
+
+const newValue = document.getElementById("newNumber").value
+
+statusText.innerText = "Executando transação..."
+
+const tx = await contract.setNumber(newValue)
+
+await tx.wait()
+
+await updateNumber()
+
+statusText.innerText = "Número atualizado"
+
+}
+
+incButton.onclick = async () => {
+
+statusText.innerText = "Incrementando..."
+
+const tx = await contract.increment()
+
+await tx.wait()
+
+await updateNumber()
+
+statusText.innerText = "Incrementado"
+
+}
+
+depositButton.onclick = async () => {
+
+const amount = depositInput.value
+
+statusText.innerText = "Depositando..."
+
+const tx = await signer.sendTransaction({
+
+to: CONTRACT_ADDRESS,
+
+value: ethers.utils.parseEther(amount)
+
+})
+
+await tx.wait()
+
+await updateBalance()
+
+statusText.innerText = "Depósito realizado"
+
+}
+
+</script>
+
 </body>
+
 </html>
