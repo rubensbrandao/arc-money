@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini dApp Staking - Arc Testnet</title>
+  <!-- ethers.js v5 para navegador -->
+<script src="ethers.min.js"></script>
+</head>
+<body>
+  <h2>Mini dApp Staking - Arc Testnet</h2>
+
+  <button id="connectWallet">Conectar Carteira</button>
+  <button id="stakeButton" disabled>Stake 0.001 ETH</button>
+  <button id="withdrawButton" disabled>Withdraw</button>
+  <p id="balance">Saldo: 0</p>
+
+  <script>
+    let provider;
+    let signer;
+    let contract;
+
+    const contractAddress = "0xe320ea0362bca5aF94EEB71Cc96661E3872e7838"; 
+    const abi = [
+      {
+        "inputs": [],
+        "name": "stake",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getStake",
+        "outputs": [{"internalType":"uint256","name":"","type":"uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ];
+
+    const connectButton = document.getElementById("connectWallet");
+    const stakeButton = document.getElementById("stakeButton");
+    const withdrawButton = document.getElementById("withdrawButton");
+    const balanceText = document.getElementById("balance");
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+
+          connectButton.disabled = true;
+          stakeButton.disabled = false;
+          withdrawButton.disabled = false;
+
+          updateBalance();
+        } catch (err) {
+          alert("Erro ao conectar MetaMask: " + err.message);
+        }
+      } else {
+        alert("MetaMask não encontrada! Instale a extensão e tente novamente.");
+      }
+    }
+
+    async function stake() {
+      try {
+        const tx = await contract.stake({ value: ethers.utils.parseEther("0.001") });
+        await tx.wait();
+        updateBalance();
+      } catch (err) {
+        alert("Erro ao fazer stake: " + err.message);
+      }
+    }
+
+    async function withdraw() {
+      try {
+        const tx = await contract.withdraw();
+        await tx.wait();
+        updateBalance();
+      } catch (err) {
+        alert("Erro ao fazer withdraw: " + err.message);
+      }
+    }
+
+    async function updateBalance() {
+      try {
+        const balance = await contract.getStake();
+        balanceText.innerText = "Saldo: " + ethers.utils.formatEther(balance) + " ETH";
+      } catch {
+        balanceText.innerText = "Saldo: erro ao ler";
+      }
+    }
+
+    connectButton.onclick = connectWallet;
+    stakeButton.onclick = stake;
+    withdrawButton.onclick = withdraw;
+  </script>
+</body>
+</html>
