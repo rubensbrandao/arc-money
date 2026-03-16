@@ -2,28 +2,63 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Mini dApp Staking - Arc Testnet</title>
-  <!-- ethers.js UMD v5 -->
+  <title>dApp Staking - Arc Testnet V2</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    button { margin: 5px; padding: 10px 15px; font-size: 16px; }
+    p { font-size: 16px; }
+    #status { color: green; }
+  </style>
 </head>
 <body>
-  <h2>Mini dApp Staking - Arc Testnet</h2>
+  <h2>dApp Staking - Arc Testnet V2</h2>
   <button id="connectWallet">Conectar Carteira</button>
   <p id="walletAddress">Endereço: (aguardando conexão...)</p>
   <button id="stakeButton" disabled>Stake 0.001 ETH</button>
   <button id="withdrawButton" disabled>Withdraw</button>
-  <p id="balance">Saldo: 0</p>
+  <p id="balance">Saldo: 0 ETH</p>
+  <p id="balanceUSDC">Saldo: 0 USDC</p>
+  <p id="balanceUSDE">Saldo: 0 USDE</p>
+  <p id="status"></p>
 
   <script>
-    // ======= Código que você colaria no console, adaptado para HTML =======
     const connectButton = document.getElementById("connectWallet");
     const walletAddress = document.getElementById("walletAddress");
     const stakeButton = document.getElementById("stakeButton");
     const withdrawButton = document.getElementById("withdrawButton");
     const balanceText = document.getElementById("balance");
+    const balanceUSDCText = document.getElementById("balanceUSDC");
+    const balanceUSDEText = document.getElementById("balanceUSDE");
+    const statusText = document.getElementById("status");
 
     stakeButton.disabled = true;
     withdrawButton.disabled = true;
+
+    const CONTRACT_ADDRESS = "0xe320ea0362bca5aF94EEB71Cc96661E3872e7838";
+    const ABI = [
+      { "inputs": [], "name": "getStake", "outputs": [{"internalType":"uint256","name":"","type":"uint256"}], "stateMutability":"view", "type":"function" },
+      { "inputs": [], "name": "stake", "outputs": [], "stateMutability": "payable", "type":"function" },
+      { "inputs": [], "name": "withdraw", "outputs": [], "stateMutability":"nonpayable", "type":"function" }
+    ];
+
+    async function updateBalance(contract) {
+      try {
+        const stake = await contract.getStake();
+        const eth = ethers.utils.formatEther(stake);
+        balanceText.innerText = `Saldo: ${eth} ETH`;
+        // Simulação conversão para USDC/USDE
+        const USDC_RATE = 1; // 1 ETH = 1 USDC (teste)
+        const USDE_RATE = 1.05; // 1 ETH = 1.05 USDE (teste)
+        balanceUSDCText.innerText = `Saldo: ${(parseFloat(eth)*USDC_RATE).toFixed(4)} USDC`;
+        balanceUSDEText.innerText = `Saldo: ${(parseFloat(eth)*USDE_RATE).toFixed(4)} USDE`;
+      } catch(err) {
+        balanceText.innerText = "Saldo: erro ao ler";
+        balanceUSDCText.innerText = "Saldo: erro ao ler";
+        balanceUSDEText.innerText = "Saldo: erro ao ler";
+        console.error("Erro ao ler saldo:", err);
+      }
+    }
 
     connectButton.onclick = async () => {
       try {
@@ -42,73 +77,40 @@
         const network = await provider.getNetwork();
         console.log("Rede atual:", network);
 
-        // Contrato
-        const contractAddress = "0xe320ea0362bca5aF94EEB71Cc96661E3872e7838";
-        const abi = [
-          {
-            "inputs": [],
-            "name": "getStake",
-            "outputs": [{"internalType":"uint256","name":"","type":"uint256"}],
-            "stateMutability":"view",
-            "type":"function"
-          },
-          {
-            "inputs": [],
-            "name": "stake",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type":"function"
-          },
-          {
-            "inputs": [],
-            "name": "withdraw",
-            "outputs": [],
-            "stateMutability":"nonpayable",
-            "type":"function"
-          }
-        ];
-        const contract = new ethers.Contract(contractAddress, abi, signer);
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
 
         stakeButton.disabled = false;
         withdrawButton.disabled = false;
 
-        // Lê saldo
-        try {
-          const stake = await contract.getStake();
-          balanceText.innerText = "Saldo: " + ethers.utils.formatEther(stake) + " ETH";
-        } catch(err) {
-          balanceText.innerText = "Saldo: erro ao ler";
-          console.error("Erro ao ler saldo:", err);
-        }
+        await updateBalance(contract);
 
-        // Eventos dos botões
         stakeButton.onclick = async () => {
           try {
+            statusText.innerText = "Staking...";
             const tx = await contract.stake({ value: ethers.utils.parseEther("0.001") });
             await tx.wait();
-            const stake = await contract.getStake();
-            balanceText.innerText = "Saldo: " + ethers.utils.formatEther(stake) + " ETH";
+            statusText.innerText = "Stake concluído!";
+            await updateBalance(contract);
           } catch(err) {
-            alert("Erro ao fazer stake: " + err.message);
+            statusText.innerText = "Erro no stake: " + err.message;
           }
         };
 
         withdrawButton.onclick = async () => {
           try {
+            statusText.innerText = "Withdraw em progresso...";
             const tx = await contract.withdraw();
             await tx.wait();
-            const stake = await contract.getStake();
-            balanceText.innerText = "Saldo: " + ethers.utils.formatEther(stake) + " ETH";
+            statusText.innerText = "Withdraw concluído!";
+            await updateBalance(contract);
           } catch(err) {
-            alert("Erro ao fazer withdraw: " + err.message);
+            statusText.innerText = "Erro no withdraw: " + err.message;
           }
         };
 
-      } catch (err) {
+      } catch(err) {
         walletAddress.innerText = "Erro ao conectar MetaMask: " + err.message;
         console.error(err);
-        stakeButton.disabled = true;
-        withdrawButton.disabled = true;
       }
     };
   </script>
