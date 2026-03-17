@@ -38,7 +38,6 @@
       overflow-x:hidden;
     }
 
-    /* background image layer */
     body::before{
       content:"";
       position:fixed;
@@ -46,7 +45,7 @@
       background-image:var(--page-bg, none);
       background-repeat:no-repeat;
       background-position:center top;
-      background-size:100% auto; /* ajusta na largura */
+      background-size:100% auto;
       opacity:1;
       pointer-events:none;
       z-index:0;
@@ -95,19 +94,18 @@
       display:block;
     }
 
-    ..brand-text h1{
-  margin:0;
-  font-size:30px;
-  font-weight:700;
-  letter-spacing:-0.5px;
-  color:#081020;
-}
+    .brand-text h1{
+      margin:0;
+      font-size:30px;
+      font-weight:700;
+      letter-spacing:-0.5px;
+      color:#081020;
+    }
 
-.brand-text p{
-  margin:6px 0 0;
-  color:#081020;
-  font-size:14px;
-}
+    .brand-text p{
+      margin:6px 0 0;
+      color:#081020;
+      font-size:14px;
     }
 
     .top-right{
@@ -661,11 +659,12 @@
               <option value="EURC">EURC</option>
               <option value="ETH">ETH</option>
               <option value="ARR">ARR</option>
+              <option value="SYN">SYN</option>
             </select>
-            <img id="swapFromTokenIcon" class="token-icon-preview" src="usdc.svg" alt="">
+            <img id="swapFromTokenIcon" class="token-icon-preview" src="usdc.webp" alt="">
           </div>
           <div class="token-balance-line">
-            <img id="swapFromBalanceIcon" src="usdc.svg" alt="">
+            <img id="swapFromBalanceIcon" src="usdc.webp" alt="">
             <span id="swapFromBalanceText">Balance: -</span>
           </div>
         </div>
@@ -686,11 +685,12 @@
               <option value="USDT">USDT</option>
               <option value="EURC">EURC</option>
               <option value="ETH">ETH</option>
+              <option value="SYN">SYN</option>
             </select>
-            <img id="swapToTokenIcon" class="token-icon-preview" src="arr.svg" alt="">
+            <img id="swapToTokenIcon" class="token-icon-preview" src="arr.webp" alt="">
           </div>
           <div class="token-balance-line">
-            <img id="swapToBalanceIcon" src="arr.svg" alt="">
+            <img id="swapToBalanceIcon" src="arr.webp" alt="">
             <span id="swapToBalanceText">Balance: -</span>
           </div>
         </div>
@@ -729,8 +729,9 @@
               <option value="EURC">EURC</option>
               <option value="ETH">ETH</option>
               <option value="ARR">ARR</option>
+              <option value="SYN">SYN</option>
             </select>
-            <img id="poolTokenAIcon" class="token-icon-preview" src="usdc.svg" alt="">
+            <img id="poolTokenAIcon" class="token-icon-preview" src="usdc.webp" alt="">
           </div>
         </div>
 
@@ -748,8 +749,9 @@
               <option value="USDT">USDT</option>
               <option value="EURC">EURC</option>
               <option value="ETH">ETH</option>
+              <option value="SYN">SYN</option>
             </select>
-            <img id="poolTokenBIcon" class="token-icon-preview" src="arr.svg" alt="">
+            <img id="poolTokenBIcon" class="token-icon-preview" src="arr.webp" alt="">
           </div>
         </div>
 
@@ -841,7 +843,10 @@
 
     <div class="footer-bottom">
       <img src="logo-arr.svg" alt="ARR Logo">
-      <div class="footer-phrase">Built to reward real interaction.</div>
+      <div class="footer-phrase">ARR — Accelerated Reward Runtime</div>
+      <div style="font-size:13px; color:#6b7280; margin-top:6px;">
+        Powering real-time reward infrastructure across the protocol.
+      </div>
       <div class="footer-copy">© 2026 Rubens Brandão — All rights reserved</div>
     </div>
   </div>
@@ -854,10 +859,8 @@
     const ARR_VAULT_ADDRESS = "0x266F2800A0CCa0b118417F225a7b28551a6F8Cc0";
     const ARR_PROTOCOL_ADDRESS = "0xBd53107D172F01061a48bC94b7473B9dF92Ef5Ba";
 
-    /* ========= BACKGROUND ========= */
-    const PAGE_BACKGROUND_IMAGE = "background.webp"; // 1920x1080
+    const PAGE_BACKGROUND_IMAGE = "background.webp";
 
-    /* ========= BANNERS ========= */
     const BANNERS = [
       {
         image: "banner-1.png",
@@ -879,15 +882,49 @@
       }
     ];
 
-    /* ========= TOKEN LOGOS ========= */
-    /* Se a pasta tokens der problema no seu host, joga na raiz e troca os caminhos aqui */
     const TOKEN_META = {
-      USDC: { symbol: "USDC", logo: "usdc.webp", balance: 0 },
-      USDT: { symbol: "USDT", logo: "usdt.webp", balance: 0 },
-      EURC: { symbol: "EURC", logo: "eurc.webp", balance: 0 },
-      ETH:  { symbol: "ETH",  logo: "eth.webp",  balance: 0 },
-      ARR:  { symbol: "ARR",  logo: "arr.webp",  balance: 0 }
+      USDC: {
+        symbol: "USDC",
+        logo: "usdc.webp",
+        balance: 0,
+        address: "0x3600000000000000000000000000000000000000"
+      },
+      USDT: {
+        symbol: "USDT",
+        logo: "usdt.webp",
+        balance: 0,
+        address: "0x175CdB1D338945f0D851A741ccF787D343E57952"
+      },
+      EURC: {
+        symbol: "EURC",
+        logo: "eurc.webp",
+        balance: 0,
+        address: "0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a"
+      },
+      ETH: {
+        symbol: "ETH",
+        logo: "eth.webp",
+        balance: 0,
+        address: null
+      },
+      ARR: {
+        symbol: "ARR",
+        logo: "arr.webp",
+        balance: 0,
+        address: ARR_TOKEN_ADDRESS
+      },
+      SYN: {
+        symbol: "SYN",
+        logo: "syn.webp",
+        balance: 0,
+        address: "0xC5124C846c6e6307986988dFb7e743327aA05F19"
+      }
     };
+
+    const ERC20_ABI = [
+      "function balanceOf(address) view returns (uint256)",
+      "function decimals() view returns (uint8)"
+    ];
 
     const ARR_PROTOCOL_ABI = [
       "function rewardUser(address user, uint256 volumeUSD) external",
@@ -956,10 +993,6 @@
 
     function formatArr(weiValue){
       return parseFloat(ethers.utils.formatEther(weiValue)).toFixed(4) + " ARR";
-    }
-
-    function formatNative(weiValue){
-      return parseFloat(ethers.utils.formatEther(weiValue)).toFixed(4);
     }
 
     function setConnectedState(connected){
@@ -1074,33 +1107,34 @@
       setTokenBalanceText("stakeTokenBalanceText", "stakeBalanceIcon", stakeTokenValue);
     }
 
-    async function getMockOrWalletBalance(symbol){
-      if(!userAddress) return 0;
+    async function getRealTokenBalance(symbol){
+      if(!userAddress || !provider) return 0;
 
-      if(symbol === "ETH" && provider){
-        try{
+      try{
+        if(symbol === "ETH"){
           const bal = await provider.getBalance(userAddress);
           return parseFloat(ethers.utils.formatEther(bal));
-        }catch{
-          return 0;
         }
-      }
 
-      if(symbol === "ARR" && arrTokenContract){
-        try{
-          const bal = await arrTokenContract.balanceOf(userAddress);
-          return parseFloat(ethers.utils.formatEther(bal));
-        }catch{
-          return 0;
-        }
-      }
+        const tokenAddress = TOKEN_META[symbol]?.address;
+        if(!tokenAddress) return 0;
 
-      return TOKEN_META[symbol]?.balance || 0;
+        const token = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+        const [bal, decimals] = await Promise.all([
+          token.balanceOf(userAddress),
+          token.decimals()
+        ]);
+
+        return parseFloat(ethers.utils.formatUnits(bal, decimals));
+      }catch(e){
+        console.error(`Balance error for ${symbol}:`, e);
+        return 0;
+      }
     }
 
     async function refreshTokenBalances(){
       for (const symbol of Object.keys(TOKEN_META)) {
-        TOKEN_META[symbol].balance = await getMockOrWalletBalance(symbol);
+        TOKEN_META[symbol].balance = await getRealTokenBalance(symbol);
       }
       updateTokenUI();
     }
@@ -1137,10 +1171,12 @@
         "USDT-ARR": 12,
         "EURC-ARR": 11.8,
         "ETH-ARR": 2200,
+        "SYN-ARR": 5,
         "ARR-USDC": 0.0833,
         "ARR-USDT": 0.0833,
         "ARR-EURC": 0.0847,
         "ARR-ETH": 0.00045,
+        "ARR-SYN": 0.2,
         "USDC-USDT": 1,
         "USDT-USDC": 1,
         "USDC-EURC": 0.93,
@@ -1152,7 +1188,9 @@
         "ETH-USDT": 2450,
         "USDT-ETH": 0.000408,
         "ETH-EURC": 2280,
-        "EURC-ETH": 0.000438
+        "EURC-ETH": 0.000438,
+        "SYN-USDC": 0.4,
+        "USDC-SYN": 2.5
       };
 
       return map[`${fromToken}-${toToken}`] || 1;
