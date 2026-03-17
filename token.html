@@ -34,14 +34,27 @@
     }
 
     body{
-      background-image: var(--page-bg, none);
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center top;
-      background-attachment: scroll;
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    /* background image layer */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image:var(--page-bg, none);
+      background-repeat:no-repeat;
+      background-position:center top;
+      background-size:100% auto; /* ajusta na largura */
+      opacity:1;
+      pointer-events:none;
+      z-index:0;
     }
 
     .wrap{
+      position:relative;
+      z-index:1;
       max-width:1280px;
       margin:0 auto;
       padding:28px;
@@ -58,8 +71,7 @@
     .brand{
       display:flex;
       gap:16px;
-      align-items:flex-start;
-      min-height:120px;
+      align-items:center;
     }
 
     .logo-box{
@@ -88,23 +100,15 @@
       font-size:30px;
       font-weight:700;
       letter-spacing:-0.5px;
+      color:white;
+      text-shadow:0 2px 10px rgba(0,0,0,0.28);
     }
 
     .brand-text p{
       margin:6px 0 0;
-      color:var(--muted);
+      color:white;
+      text-shadow:0 2px 10px rgba(0,0,0,0.28);
       font-size:14px;
-    }
-
-    .hero-copy{
-      margin-top:14px;
-      max-width:560px;
-      font-size:24px;
-      line-height:1.2;
-      font-weight:700;
-      background:linear-gradient(to right, #344566, #8b8e95);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
     }
 
     .top-right{
@@ -125,16 +129,11 @@
     }
 
     .wallet-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:start;
       margin-bottom:10px;
-    }
-
-    .wallet-left{
-      flex:1;
-      min-width:0;
     }
 
     .wallet-label{
@@ -156,19 +155,11 @@
       min-height:16px;
     }
 
-    .wallet-connect-area{
+    .wallet-action{
       display:flex;
       flex-direction:column;
       align-items:flex-end;
       gap:8px;
-      flex-shrink:0;
-    }
-
-    .signature-status{
-      font-size:12px;
-      color:var(--muted);
-      text-align:right;
-      min-height:18px;
     }
 
     .mini-stats{
@@ -224,10 +215,17 @@
       color:white;
     }
 
+    .signature-status{
+      font-size:13px;
+      color:var(--muted);
+      text-align:right;
+      min-height:18px;
+    }
+
     .banner-link{
-      display:block;
       text-decoration:none;
       color:inherit;
+      display:block;
     }
 
     .banner{
@@ -502,31 +500,6 @@
       background:white;
     }
 
-    .footer-bottom{
-      margin-top:34px;
-      padding:42px 20px 28px;
-      text-align:center;
-    }
-
-    .footer-bottom .footer-logo{
-      width:74px;
-      height:auto;
-      margin:0 auto 12px;
-      display:block;
-    }
-
-    .footer-bottom .footer-phrase{
-      color:var(--text);
-      font-size:16px;
-      margin-bottom:10px;
-      font-weight:600;
-    }
-
-    .footer-bottom .footer-copy{
-      color:var(--muted);
-      font-size:14px;
-    }
-
     .footer{
       display:flex;
       justify-content:space-between;
@@ -536,7 +509,6 @@
       color:var(--muted);
       font-size:14px;
       border-top:1px solid #e7e7e7;
-      margin-top:16px;
     }
 
     .footer-links{
@@ -554,26 +526,61 @@
       color:var(--gold);
     }
 
+    .footer-bottom{
+      text-align:center;
+      padding:60px 20px;
+    }
+
+    .footer-bottom img{
+      width:80px;
+      height:auto;
+      display:block;
+      margin:0 auto 14px;
+    }
+
+    .footer-bottom .footer-phrase{
+      font-size:16px;
+      color:var(--text);
+      margin-bottom:12px;
+      font-weight:600;
+    }
+
+    .footer-bottom .footer-copy{
+      color:var(--muted);
+      font-size:14px;
+    }
+
     @media (max-width:1080px){
+      body::before{
+        background-size: 140% auto;
+      }
+
       .grid{ grid-template-columns:1fr; }
       .card{ min-height:auto; }
+
       .header{
         flex-direction:column;
         align-items:stretch;
       }
-      .top-right{ align-items:stretch; }
-      .wallet-panel{ min-width:unset; }
-      .banner{ height:200px; }
-      .wallet-top{
-        flex-direction:column;
+
+      .top-right{
         align-items:stretch;
+        min-width:unset;
       }
-      .wallet-connect-area{
+
+      .wallet-panel{
+        min-width:unset;
+      }
+
+      .wallet-top{
+        grid-template-columns:1fr;
+      }
+
+      .wallet-action{
         align-items:flex-start;
       }
-      .hero-copy{
-        font-size:20px;
-      }
+
+      .banner{ height:200px; }
     }
   </style>
 </head>
@@ -584,24 +591,22 @@
         <div class="logo-box">
           <img src="logo-arr.svg" alt="ARR Protocol Logo" />
         </div>
-
         <div class="brand-text">
           <h1>ARR Protocol</h1>
           <p>Swap, liquidity and staking in a clean modular interface.</p>
-          
         </div>
       </div>
 
       <div class="top-right">
         <div class="wallet-panel">
           <div class="wallet-top">
-            <div class="wallet-left">
+            <div>
               <div class="wallet-label">Wallet Total Balance</div>
               <div class="wallet-balance" id="walletBalance">0.0000 ETH</div>
               <div class="wallet-address" id="walletAddress">Wallet not connected</div>
             </div>
 
-            <div class="wallet-connect-area">
+            <div class="wallet-action">
               <button id="connectBtn">Connect Wallet</button>
               <div class="signature-status" id="signatureStatus">Ready</div>
             </div>
@@ -621,18 +626,12 @@
       </div>
     </div>
 
-    <a id="bannerMainLink" class="banner-link" href="javascript:void(0);" target="_blank" rel="noopener noreferrer">
+    <a href="javascript:void(0);" id="bannerMainLink" class="banner-link" target="_blank" rel="noopener noreferrer">
       <div class="banner">
         <div class="slides">
-          <div class="slide active">
-            <img id="bannerImg1" src="banner-1.png" alt="Banner 1" />
-          </div>
-          <div class="slide">
-            <img id="bannerImg2" src="banner-2.png" alt="Banner 2" />
-          </div>
-          <div class="slide">
-            <img id="bannerImg3" src="banner-3.png" alt="Banner 3" />
-          </div>
+          <div class="slide active"><img src="banner-1.png" alt="Banner 1" /></div>
+          <div class="slide"><img src="banner-2.png" alt="Banner 2" /></div>
+          <div class="slide"><img src="banner-3.png" alt="Banner 3" /></div>
         </div>
 
         <div class="banner-overlay">
@@ -664,10 +663,10 @@
               <option value="ETH">ETH</option>
               <option value="ARR">ARR</option>
             </select>
-            <img id="swapFromTokenIcon" class="token-icon-preview" src="tokens/usdc.png" alt="">
+            <img id="swapFromTokenIcon" class="token-icon-preview" src="usdc.svg" alt="">
           </div>
           <div class="token-balance-line">
-            <img id="swapFromBalanceIcon" src="tokens/usdc.png" alt="">
+            <img id="swapFromBalanceIcon" src="usdc.svg" alt="">
             <span id="swapFromBalanceText">Balance: -</span>
           </div>
         </div>
@@ -689,10 +688,10 @@
               <option value="EURC">EURC</option>
               <option value="ETH">ETH</option>
             </select>
-            <img id="swapToTokenIcon" class="token-icon-preview" src="tokens/arr.png" alt="">
+            <img id="swapToTokenIcon" class="token-icon-preview" src="arr.svg" alt="">
           </div>
           <div class="token-balance-line">
-            <img id="swapToBalanceIcon" src="tokens/arr.png" alt="">
+            <img id="swapToBalanceIcon" src="arr.svg" alt="">
             <span id="swapToBalanceText">Balance: -</span>
           </div>
         </div>
@@ -732,7 +731,7 @@
               <option value="ETH">ETH</option>
               <option value="ARR">ARR</option>
             </select>
-            <img id="poolTokenAIcon" class="token-icon-preview" src="tokens/usdc.png" alt="">
+            <img id="poolTokenAIcon" class="token-icon-preview" src="usdc.svg" alt="">
           </div>
         </div>
 
@@ -751,7 +750,7 @@
               <option value="EURC">EURC</option>
               <option value="ETH">ETH</option>
             </select>
-            <img id="poolTokenBIcon" class="token-icon-preview" src="tokens/arr.png" alt="">
+            <img id="poolTokenBIcon" class="token-icon-preview" src="arr.svg" alt="">
           </div>
         </div>
 
@@ -784,10 +783,10 @@
             <select id="stakeToken">
               <option value="ARR">ARR</option>
             </select>
-            <img id="stakeTokenIcon" class="token-icon-preview" src="tokens/arr.png" alt="">
+            <img id="stakeTokenIcon" class="token-icon-preview" src="arr.svg" alt="">
           </div>
           <div class="token-balance-line">
-            <img id="stakeBalanceIcon" src="tokens/arr.png" alt="">
+            <img id="stakeBalanceIcon" src="arr.svg" alt="">
             <span id="stakeTokenBalanceText">Balance: -</span>
           </div>
         </div>
@@ -842,7 +841,7 @@
     </div>
 
     <div class="footer-bottom">
-      <img class="footer-logo" src="logo-arr.svg" alt="ARR Logo">
+      <img src="logo-arr.svg" alt="ARR Logo">
       <div class="footer-phrase">Built to reward real interaction.</div>
       <div class="footer-copy">© 2026 Rubens Brandão — All rights reserved</div>
     </div>
@@ -856,39 +855,39 @@
     const ARR_VAULT_ADDRESS = "0x266F2800A0CCa0b118417F225a7b28551a6F8Cc0";
     const ARR_PROTOCOL_ADDRESS = "0x505d906136cab0EEb11Fa8DCf0FedFC337d64f00";
 
-    // ========= BACKGROUND CONFIG =========
-    // Coloque sua imagem 1920x1080 aqui
-    const PAGE_BACKGROUND_IMAGE = "bg-Home.webp"; 
-    
-    // ========= BANNER CONFIG =========
+    /* ========= BACKGROUND ========= */
+    const PAGE_BACKGROUND_IMAGE = "background.webp"; // 1920x1080
+
+    /* ========= BANNERS ========= */
     const BANNERS = [
       {
         image: "banner-1.png",
-        title: "Built on ARK",
-        subtitle: "Our protocol is powered by ARK for real-world utility and innovation.",
+        title: "ARR Protocol",
+        subtitle: "Build your DeFi experience with swap, pools and staking.",
         link: ""
       },
       {
         image: "banner-2.png",
         title: "Liquidity and Rewards",
-        subtitle: "Simple and fast. Start earning ARR today by interacting with the protocol.",
+        subtitle: "Provide value and keep the protocol moving.",
         link: ""
       },
       {
         image: "banner-3.png",
-        title: "Join the Project",
-        subtitle: "Connect with us on X and be part of the growth. Your journey starts here.",
-        link: "https://x.com/rubensbrandao1"
+        title: "Built on Utility",
+        subtitle: "Use ARR through interaction, staking and rewards.",
+        link: ""
       }
     ];
 
-    // ========= TOKEN CONFIG =========
+    /* ========= TOKEN LOGOS ========= */
+    /* Se a pasta tokens der problema no seu host, joga na raiz e troca os caminhos aqui */
     const TOKEN_META = {
-      USDC: { symbol: "USDC", logo: "tokens/usdc.svg", balance: 150.0000 },
-      USDT: { symbol: "USDT", logo: "tokens/usdt.svg", balance: 150.0000 },
-      EURC: { symbol: "EURC", logo: "tokens/eurc.svg", balance: 120.0000 },
-      ETH:  { symbol: "ETH",  logo: "tokens/eth.svg",  balance: 1.2500 },
-      ARR:  { symbol: "ARR",  logo: "tokens/arr.svg",  balance: 0.0000 }
+      USDC: { symbol: "USDC", logo: "usdc.svg", balance: 0 },
+      USDT: { symbol: "USDT", logo: "usdt.svg", balance: 0 },
+      EURC: { symbol: "EURC", logo: "eurc.svg", balance: 0 },
+      ETH:  { symbol: "ETH",  logo: "eth.svg",  balance: 0 },
+      ARR:  { symbol: "ARR",  logo: "arr.svg",  balance: 0 }
     };
 
     const ARR_PROTOCOL_ABI = [
@@ -897,47 +896,13 @@
     ];
 
     const ARR_TOKEN_ABI = [
-      {
-        "inputs":[{"internalType":"address","name":"","type":"address"}],
-        "name":"balanceOf",
-        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
-        "stateMutability":"view",
-        "type":"function"
-      }
+      "function balanceOf(address) view returns (uint256)"
     ];
 
     const ARR_VAULT_ABI = [
-      {
-        "inputs":[{"internalType":"address","name":"","type":"address"}],
-        "name":"pendingRewards",
-        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
-        "stateMutability":"view",
-        "type":"function"
-      },
-      {
-        "inputs":[],
-        "name":"claim",
-        "outputs":[],
-        "stateMutability":"nonpayable",
-        "type":"function"
-      },
-      {
-        "inputs":[],
-        "name":"vaultBalance",
-        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
-        "stateMutability":"view",
-        "type":"function"
-      },
-      {
-        "inputs":[
-          {"internalType":"address","name":"user","type":"address"},
-          {"internalType":"uint256","name":"amount","type":"uint256"}
-        ],
-        "name":"addReward",
-        "outputs":[],
-        "stateMutability":"nonpayable",
-        "type":"function"
-      }
+      "function pendingRewards(address) view returns (uint256)",
+      "function claim()",
+      "function vaultBalance() view returns (uint256)"
     ];
 
     let provider = null;
@@ -982,15 +947,9 @@
 
     const slides = document.querySelectorAll(".slide");
     const dots = document.querySelectorAll(".dot");
-
     const bannerMainLink = document.getElementById("bannerMainLink");
     const bannerTitle = document.getElementById("bannerTitle");
     const bannerSubtitle = document.getElementById("bannerSubtitle");
-    const bannerImgs = [
-      document.getElementById("bannerImg1"),
-      document.getElementById("bannerImg2"),
-      document.getElementById("bannerImg3")
-    ];
 
     function shortAddress(addr){
       return addr ? addr.slice(0,6) + "..." + addr.slice(-4) : "";
@@ -998,6 +957,10 @@
 
     function formatArr(weiValue){
       return parseFloat(ethers.utils.formatEther(weiValue)).toFixed(4) + " ARR";
+    }
+
+    function formatNative(weiValue){
+      return parseFloat(ethers.utils.formatEther(weiValue)).toFixed(4);
     }
 
     function setConnectedState(connected){
@@ -1045,10 +1008,9 @@
     }
 
     function applyBannerConfig(){
+      const imgs = document.querySelectorAll(".slide img");
       BANNERS.forEach((banner, index) => {
-        if (bannerImgs[index]) {
-          bannerImgs[index].src = banner.image;
-        }
+        if (imgs[index]) imgs[index].src = banner.image;
       });
       updateBannerContent(0);
     }
@@ -1084,10 +1046,12 @@
     function setTokenBalanceText(textId, iconId, tokenSymbol){
       const textEl = document.getElementById(textId);
       const iconEl = document.getElementById(iconId);
+
       if (iconEl && TOKEN_META[tokenSymbol]) {
         iconEl.src = TOKEN_META[tokenSymbol].logo;
         iconEl.alt = tokenSymbol;
       }
+
       if (textEl && TOKEN_META[tokenSymbol]) {
         textEl.innerText = `Balance: ${TOKEN_META[tokenSymbol].balance.toFixed(4)} ${tokenSymbol}`;
       }
@@ -1111,6 +1075,37 @@
       setTokenBalanceText("stakeTokenBalanceText", "stakeBalanceIcon", stakeTokenValue);
     }
 
+    async function getMockOrWalletBalance(symbol){
+      if(!userAddress) return 0;
+
+      if(symbol === "ETH" && provider){
+        try{
+          const bal = await provider.getBalance(userAddress);
+          return parseFloat(ethers.utils.formatEther(bal));
+        }catch{
+          return 0;
+        }
+      }
+
+      if(symbol === "ARR" && arrTokenContract){
+        try{
+          const bal = await arrTokenContract.balanceOf(userAddress);
+          return parseFloat(ethers.utils.formatEther(bal));
+        }catch{
+          return 0;
+        }
+      }
+
+      return TOKEN_META[symbol]?.balance || 0;
+    }
+
+    async function refreshTokenBalances(){
+      for (const symbol of Object.keys(TOKEN_META)) {
+        TOKEN_META[symbol].balance = await getMockOrWalletBalance(symbol);
+      }
+      updateTokenUI();
+    }
+
     async function refreshWalletInfo(){
       if(!provider || !userAddress) return;
       const bal = await provider.getBalance(userAddress);
@@ -1130,9 +1125,6 @@
         pendingArrTop.innerText = formatArr(pendingArr);
         pendingArrCard.innerText = formatArr(pendingArr);
         vaultArrBalance.innerText = formatArr(vaultBal);
-
-        TOKEN_META.ARR.balance = parseFloat(ethers.utils.formatEther(walletArr));
-        updateTokenUI();
       } catch(e) {
         console.error(e);
       }
@@ -1223,6 +1215,7 @@
 
         await refreshWalletInfo();
         await refreshArrData();
+        await refreshTokenBalances();
 
         setConnectedState(true);
 
@@ -1244,6 +1237,7 @@
         await tx.wait();
 
         await refreshArrData();
+        await refreshTokenBalances();
 
         stakeStatus.className = "status ok";
         stakeStatus.innerText = "ARR claimed successfully.";
@@ -1280,6 +1274,7 @@
         await tx.wait();
 
         await refreshArrData();
+        await refreshTokenBalances();
 
         swapStatus.className = "status ok";
         swapStatus.innerText = "Swap completed successfully 🚀";
@@ -1321,13 +1316,24 @@
       });
     });
 
-    swapFromToken.addEventListener("change", updateSwapPreview);
-    swapToToken.addEventListener("change", updateSwapPreview);
+    swapFromToken.addEventListener("change", async () => {
+      await refreshTokenBalances();
+      updateSwapPreview();
+    });
+
+    swapToToken.addEventListener("change", async () => {
+      await refreshTokenBalances();
+      updateSwapPreview();
+    });
+
     swapFromAmount.addEventListener("input", updateSwapPreview);
 
     document.getElementById("poolTokenA").addEventListener("change", updateTokenUI);
     document.getElementById("poolTokenB").addEventListener("change", updateTokenUI);
-    stakeToken.addEventListener("change", updateTokenUI);
+    stakeToken.addEventListener("change", async () => {
+      await refreshTokenBalances();
+      updateTokenUI();
+    });
 
     setInterval(() => {
       currentSlide = (currentSlide + 1) % slides.length;
