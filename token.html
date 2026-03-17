@@ -1,0 +1,248 @@
+<!-- ARR PROTOCOL FINAL HTML (AJUSTADO) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARR Protocol</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(#0f172a, #111827, #f3f4f6);
+  color:white;
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  padding:30px;
+}
+
+.left{
+  max-width:500px;
+}
+
+.left h1{
+  margin:0;
+  font-size:32px;
+}
+
+.left p{
+  margin-top:10px;
+  font-size:18px;
+  background:linear-gradient(to right,#344566,#8b8e95);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ===== BOXES ===== */
+.boxes{
+  display:flex;
+  gap:15px;
+}
+
+.box{
+  background:#1f2937;
+  padding:15px;
+  border-radius:12px;
+  min-width:220px;
+}
+
+button{
+  background:linear-gradient(#344566,#8b8e95);
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+}
+
+/* ===== BANNERS ===== */
+.banner{
+  margin:30px;
+  height:200px;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+}
+
+.banner img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.banner-text{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+}
+
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:20px;
+  padding:30px;
+}
+
+.card{
+  background:white;
+  color:black;
+  padding:20px;
+  border-radius:15px;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center;
+  padding:50px 20px;
+}
+
+.footer img{
+  width:80px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="left">
+    <img src="logo-arr.svg" height="60">
+    <h1>ARR Protocol</h1>
+    <p>Earn ARR without waiting. Everything is live and ready — just interact.</p>
+  </div>
+
+  <div class="boxes">
+    <div class="box">
+      <div>Wallet</div>
+      <div id="walletAddress">Not connected</div>
+      <button id="connectBtn">Connect</button>
+    </div>
+
+    <div class="box">
+      <div>ARR Balance</div>
+      <div id="arrBalance">0</div>
+      <div>Rewards</div>
+      <div id="arrRewards">0</div>
+      <button id="claimBtn">Claim</button>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER 1 -->
+<a href="" id="banner1Link">
+<div class="banner">
+  <img src="banner-1.png">
+  <div class="banner-text">
+    <h2 id="b1title">Your DeFi Hub</h2>
+    <p id="b1sub">Swap, stake and earn in one place</p>
+  </div>
+</div>
+</a>
+
+<!-- GRID -->
+<div class="grid">
+
+  <!-- SWAP -->
+  <div class="card">
+    <h2>Swap</h2>
+
+    <select id="swapFromToken">
+      <option>USDC</option>
+      <option>ARR</option>
+    </select>
+
+    <input id="swapFromAmount" placeholder="Amount">
+
+    <select id="swapToToken">
+      <option>ARR</option>
+      <option>USDC</option>
+    </select>
+
+    <input id="swapToAmount" readonly>
+
+    <button id="swapBtn">Swap</button>
+    <div id="swapStatus"></div>
+  </div>
+
+  <!-- POOL -->
+  <div class="card">
+    <h2>Pool</h2>
+    <p>Coming soon</p>
+  </div>
+
+  <!-- STAKE -->
+  <div class="card">
+    <h2>Stake</h2>
+
+    <input id="stakeAmount" placeholder="Amount">
+
+    <button id="stakeBtn">Stake</button>
+    <button id="unstakeBtn">Unstake</button>
+
+  </div>
+
+</div>
+
+<!-- BANNER 2 -->
+<a href="" id="banner2Link">
+<div class="banner">
+  <img src="banner-2.png">
+  <div class="banner-text">
+    <h2 id="b2title">Liquidity = Power</h2>
+    <p id="b2sub">Provide liquidity and earn rewards</p>
+  </div>
+</div>
+</a>
+
+<!-- BANNER 3 -->
+<a href="" id="banner3Link">
+<div class="banner">
+  <img src="banner-3.png">
+  <div class="banner-text">
+    <h2 id="b3title">Real Utility Token</h2>
+    <p id="b3sub">ARR is designed for usage, not hype</p>
+  </div>
+</div>
+</a>
+
+<!-- FOOTER -->
+<div class="footer">
+  <img src="logo-arr.svg">
+  <p>Building the future of decentralized finance.</p>
+  <p>© 2026 Rubens Brandão — All rights reserved</p>
+</div>
+
+<script>
+let provider, signer;
+
+document.getElementById("connectBtn").onclick = async () => {
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = provider.getSigner();
+
+  document.getElementById("walletAddress").innerText =
+    await signer.getAddress();
+};
+
+document.getElementById("swapBtn").onclick = async () => {
+  document.getElementById("swapStatus").innerText = "Swap executed (mock)";
+};
+
+/* ===== BANNER LINKS (EDITÁVEL) ===== */
+document.getElementById("banner1Link").href = "";
+document.getElementById("banner2Link").href = "";
+document.getElementById("banner3Link").href = "";
+</script>
+
+</body>
+</html>
