@@ -24,9 +24,7 @@
       --radius:18px;
     }
 
-    *{
-      box-sizing:border-box;
-    }
+    *{ box-sizing:border-box; }
 
     html,body{
       margin:0;
@@ -57,22 +55,23 @@
     }
 
     .logo-box{
-      width:78px;
       height:78px;
+      min-width:78px;
       border-radius:20px;
-      border:0px dashed #c7c9cf;
-      background:#;
+      border:1px dashed #c7c9cf;
+      background:#fff;
       display:flex;
       align-items:center;
       justify-content:center;
       box-shadow:var(--shadow);
       overflow:hidden;
       flex-shrink:0;
+      padding:8px 12px;
     }
 
     .logo-box img{
-      width:100%;
       height:100%;
+      width:auto;
       object-fit:contain;
       display:block;
     }
@@ -95,7 +94,7 @@
       flex-direction:column;
       align-items:flex-end;
       gap:10px;
-      min-width:280px;
+      min-width:320px;
     }
 
     .wallet-panel{
@@ -104,7 +103,7 @@
       border-radius:16px;
       padding:14px 16px;
       box-shadow:var(--shadow);
-      min-width:290px;
+      min-width:320px;
     }
 
     .wallet-label{
@@ -124,6 +123,32 @@
       color:var(--muted);
       word-break:break-all;
       min-height:16px;
+      margin-bottom:10px;
+    }
+
+    .mini-stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .mini-stat{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+    }
+
+    .mini-stat .label{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .mini-stat .value{
+      font-size:14px;
+      font-weight:700;
     }
 
     .wallet-actions{
@@ -176,7 +201,7 @@
     .banner{
       position:relative;
       width:100%;
-      height:240px;
+      height:200px;
       border-radius:22px;
       overflow:hidden;
       background:#ddd;
@@ -206,6 +231,7 @@
       width:100%;
       height:100%;
       object-fit:cover;
+      object-position:center;
       display:block;
     }
 
@@ -266,7 +292,7 @@
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding:20px;
-      min-height:560px;
+      min-height:620px;
       display:flex;
       flex-direction:column;
     }
@@ -346,7 +372,7 @@
       margin-top:auto;
       padding-top:14px;
       font-size:14px;
-      min-height:38px;
+      min-height:42px;
       color:var(--muted);
     }
 
@@ -381,6 +407,19 @@
       display:flex;
       flex-direction:column;
       gap:10px;
+    }
+
+    .reward-box{
+      margin-top:18px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .reward-box h3{
+      margin:0 0 10px;
+      font-size:17px;
     }
 
     .footer{
@@ -453,6 +492,17 @@
           <div class="wallet-label">Wallet Total Balance</div>
           <div class="wallet-balance" id="walletBalance">0.0000 ETH</div>
           <div class="wallet-address" id="walletAddress">Wallet not connected</div>
+
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <div class="label">ARR Balance</div>
+              <div class="value" id="arrWalletBalance">0.0000 ARR</div>
+            </div>
+            <div class="mini-stat">
+              <div class="label">Pending ARR</div>
+              <div class="value" id="pendingArrTop">0.0000 ARR</div>
+            </div>
+          </div>
         </div>
 
         <div class="wallet-actions">
@@ -467,19 +517,19 @@
     <div class="banner">
       <div class="slides">
         <div class="slide active">
-          <img src="https://rubensbrandao.github.io/ARR-Protocol//banner-1.jpg" alt="Banner 1" />
+          <img src="banner-1.jpg" alt="Banner 1" />
         </div>
         <div class="slide">
-          <img src="https://rubensbrandao.github.io/ARR-Protocol/banner-2.jpg" alt="Banner 2" />
+          <img src="banner-2.jpg" alt="Banner 2" />
         </div>
         <div class="slide">
-          <img src="https://rubensbrandao.github.io/ARR-Protocol/banner-3.jpg" alt="Banner 3" />
+          <img src="banner-3.jpg" alt="Banner 3" />
         </div>
       </div>
 
       <div class="banner-overlay">
-        <h2>ARR Protocol</h2>
-        <p>Build your DeFi experience with swap, pools and staking.</p>
+        <h2 id="bannerTitle">ARR Protocol</h2>
+        <p id="bannerSubtitle">Build your DeFi experience with swap, pools and staking.</p>
       </div>
 
       <div class="dots">
@@ -490,6 +540,7 @@
     </div>
 
     <div class="grid">
+      <!-- SWAP -->
       <div class="card">
         <h2>Swap</h2>
         <div class="card-sub">Choose the input and output token for your swap.</div>
@@ -543,6 +594,7 @@
         <div class="status" id="swapStatus">Connect your wallet to begin.</div>
       </div>
 
+      <!-- POOL -->
       <div class="card">
         <h2>Liquidity Pool</h2>
         <div class="card-sub">Deposit token pairs and select the fee tier.</div>
@@ -592,6 +644,7 @@
         <div class="status" id="poolStatus">Pool logic will be connected after swap implementation.</div>
       </div>
 
+      <!-- STAKE -->
       <div class="card">
         <h2>Stake</h2>
         <div class="card-sub">Stake tokens and receive part of protocol fees.</div>
@@ -628,6 +681,21 @@
           <button class="btn-light" id="unstakeBtn" disabled>Unstake</button>
         </div>
 
+        <div class="reward-box">
+          <h3>ARR Rewards</h3>
+          <div class="meta-row">
+            <span>Pending ARR</span>
+            <span id="pendingArrCard">0.0000 ARR</span>
+          </div>
+          <div class="meta-row">
+            <span>Vault ARR</span>
+            <span id="vaultArrBalance">0.0000 ARR</span>
+          </div>
+          <div style="margin-top:12px;">
+            <button id="claimBtn" disabled>Claim ARR</button>
+          </div>
+        </div>
+
         <div class="status" id="stakeStatus">Stake module will be connected after pool implementation.</div>
       </div>
     </div>
@@ -643,16 +711,67 @@
   </div>
 
   <script>
+    // ===== Editable banner text =====
+    const BANNER_TITLE_TEXT = "ARR Protocol";
+    const BANNER_SUBTITLE_TEXT = "Build your DeFi experience with swap, pools and staking.";
+
+    // ===== Contract addresses =====
+    const ARR_TOKEN_ADDRESS = "0x45e7042504b63435Fc215645bDb610Bec5387183";
+    const ARR_VAULT_ADDRESS = "0x266F2800A0CCa0b118417F225a7b28551a6F8Cc0";
+
+    // ===== ABIs =====
+    const ARR_TOKEN_ABI = [
+      {
+        "inputs":[{"internalType":"address","name":"","type":"address"}],
+        "name":"balanceOf",
+        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+        "stateMutability":"view",
+        "type":"function"
+      }
+    ];
+
+    const ARR_VAULT_ABI = [
+      {
+        "inputs":[{"internalType":"address","name":"","type":"address"}],
+        "name":"pendingRewards",
+        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+        "stateMutability":"view",
+        "type":"function"
+      },
+      {
+        "inputs":[],
+        "name":"claim",
+        "outputs":[],
+        "stateMutability":"nonpayable",
+        "type":"function"
+      },
+      {
+        "inputs":[],
+        "name":"vaultBalance",
+        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+        "stateMutability":"view",
+        "type":"function"
+      }
+    ];
+
     let provider = null;
     let signer = null;
     let userAddress = null;
+    let arrTokenContract = null;
+    let arrVaultContract = null;
     let selectedPoolFee = "0.3%";
 
     const connectBtn = document.getElementById("connectBtn");
     const disconnectBtn = document.getElementById("disconnectBtn");
+    const claimBtn = document.getElementById("claimBtn");
+
     const walletBalance = document.getElementById("walletBalance");
     const walletAddress = document.getElementById("walletAddress");
     const signatureStatus = document.getElementById("signatureStatus");
+    const arrWalletBalance = document.getElementById("arrWalletBalance");
+    const pendingArrTop = document.getElementById("pendingArrTop");
+    const pendingArrCard = document.getElementById("pendingArrCard");
+    const vaultArrBalance = document.getElementById("vaultArrBalance");
 
     const swapBtn = document.getElementById("swapBtn");
     const swapStatus = document.getElementById("swapStatus");
@@ -675,8 +794,15 @@
     const dots = document.querySelectorAll(".dot");
     let currentSlide = 0;
 
+    document.getElementById("bannerTitle").innerText = BANNER_TITLE_TEXT;
+    document.getElementById("bannerSubtitle").innerText = BANNER_SUBTITLE_TEXT;
+
     function shortAddress(addr){
       return addr ? addr.slice(0,6) + "..." + addr.slice(-4) : "";
+    }
+
+    function formatArr(weiValue){
+      return parseFloat(ethers.utils.formatEther(weiValue)).toFixed(4) + " ARR";
     }
 
     function setConnectedState(connected){
@@ -685,29 +811,54 @@
       poolBtn.disabled = !connected;
       stakeBtn.disabled = !connected;
       unstakeBtn.disabled = !connected;
+      claimBtn.disabled = !connected;
     }
 
     function resetApp(){
       provider = null;
       signer = null;
       userAddress = null;
+      arrTokenContract = null;
+      arrVaultContract = null;
+
       walletBalance.innerText = "0.0000 ETH";
       walletAddress.innerText = "Wallet not connected";
       signatureStatus.innerText = "Signature pending";
+      arrWalletBalance.innerText = "0.0000 ARR";
+      pendingArrTop.innerText = "0.0000 ARR";
+      pendingArrCard.innerText = "0.0000 ARR";
+      vaultArrBalance.innerText = "0.0000 ARR";
+
       swapStatus.className = "status";
       poolStatus.className = "status";
       stakeStatus.className = "status";
+
       swapStatus.innerText = "Connect your wallet to begin.";
       poolStatus.innerText = "Pool logic will be connected after swap implementation.";
       stakeStatus.innerText = "Stake module will be connected after pool implementation.";
+
       setConnectedState(false);
     }
 
     async function refreshWalletInfo(){
       if(!provider || !userAddress) return;
+
       const bal = await provider.getBalance(userAddress);
       walletBalance.innerText = parseFloat(ethers.utils.formatEther(bal)).toFixed(4) + " ETH";
       walletAddress.innerText = shortAddress(userAddress);
+    }
+
+    async function refreshArrData(){
+      if(!arrTokenContract || !arrVaultContract || !userAddress) return;
+
+      const walletArr = await arrTokenContract.balanceOf(userAddress);
+      const pendingArr = await arrVaultContract.pendingRewards(userAddress);
+      const vaultBal = await arrVaultContract.vaultBalance();
+
+      arrWalletBalance.innerText = formatArr(walletArr);
+      pendingArrTop.innerText = formatArr(pendingArr);
+      pendingArrCard.innerText = formatArr(pendingArr);
+      vaultArrBalance.innerText = formatArr(vaultBal);
     }
 
     function getMockRate(fromToken, toToken){
@@ -776,8 +927,14 @@
         const message = `Sign to access ARR Protocol\nWallet: ${userAddress}`;
         await signer.signMessage(message);
 
+        arrTokenContract = new ethers.Contract(ARR_TOKEN_ADDRESS, ARR_TOKEN_ABI, signer);
+        arrVaultContract = new ethers.Contract(ARR_VAULT_ADDRESS, ARR_VAULT_ABI, signer);
+
         signatureStatus.innerText = "Signature confirmed";
+
         await refreshWalletInfo();
+        await refreshArrData();
+
         setConnectedState(true);
 
         swapStatus.className = "status ok";
@@ -791,6 +948,25 @@
 
     disconnectBtn.onclick = async () => {
       resetApp();
+    };
+
+    claimBtn.onclick = async () => {
+      try{
+        stakeStatus.className = "status";
+        stakeStatus.innerText = "Claim transaction submitted...";
+
+        const tx = await arrVaultContract.claim();
+        await tx.wait();
+
+        await refreshArrData();
+
+        stakeStatus.className = "status ok";
+        stakeStatus.innerText = "ARR claimed successfully.";
+      }catch(err){
+        console.error(err);
+        stakeStatus.className = "status err";
+        stakeStatus.innerText = "Claim failed or no rewards available.";
+      }
     };
 
     swapBtn.onclick = async () => {
